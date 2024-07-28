@@ -1,19 +1,5 @@
-// Array of quote objects
-let quotes = [
-  {
-    text: "The only limit to our realization of tomorrow is our doubts of today.",
-    category: "Motivation",
-  },
-  {
-    text: "Life is what happens when you're busy making other plans.",
-    category: "Life",
-  },
-  { text: "Get busy living or get busy dying.", category: "Life" },
-  {
-    text: "The way to get started is to quit talking and begin doing.",
-    category: "Motivation",
-  },
-];
+// Array of quote objects (loaded from local storage initially)
+let quotes = [];
 
 // Function to display a random quote
 function showRandomQuote() {
@@ -32,6 +18,7 @@ function addNewQuote() {
     quotes.push({ text: quoteText, category: quoteCategory });
     document.getElementById("quoteText").value = "";
     document.getElementById("quoteCategory").value = "";
+    saveQuotes(); // Save quotes to local storage
     alert("Quote added successfully!");
   } else {
     alert("Please fill out both fields.");
@@ -69,9 +56,30 @@ function createAddQuoteForm() {
   addQuoteButton.addEventListener("click", addNewQuote);
 }
 
-// Event listeners for buttons
-document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+// Function to save quotes to local storage
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
 
-// Initial setup
-showRandomQuote();
-createAddQuoteForm();
+// Function to load quotes from local storage (called on initialization)
+function loadQuotes() {
+  const storedQuotes = localStorage.getItem("quotes");
+  if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
+  }
+}
+
+// Function to export quotes to a JSON file
+function exportQuotesToJson() {
+  const jsonData = JSON.stringify(quotes);
+  const blob = new Blob([jsonData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'quotes.json';
+  link.click();
+  URL.revokeObjectURL(url); // Revoke temporary URL after download
+}
+
+// Function to import quotes from a JSON file
+function importFromJsonFile
